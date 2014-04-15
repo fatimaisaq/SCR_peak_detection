@@ -1,9 +1,9 @@
 import sys
 from numpy improt NaN, Inf, arange, isscaler, array
 import csv
-def peakdet(SCR,threshold, x = None):
+def findpeak(SCR,threshold, x = None):
     
-    data = open('C:\Documents\Participants\PP2, 'r')
+    data = open('C:\Documents\Participants\PP2', 'r')
 datareader = csv.reader(data)
 
    Peaks = []
@@ -52,7 +52,7 @@ for i in arange(len(scr)):
                     return array(peaks), array(minindex)
             
     if _name__ == "__main__":
-                peaks, minindex = peakdet(data,0.03)
+                peaks, minindex = findpeak(data,0.03)
         plot(peaks)
         scatter(array(peaks)[:,0], array(peaks)[:,1], color='red')
         scatter(array(minindex)[:,0], array(minindex)[:,1], color='green')

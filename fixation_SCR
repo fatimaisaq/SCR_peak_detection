@@ -1,0 +1,112 @@
+data = dataset(mstring('xlsfile'), mstring('PP2.xlsx'))
+Fixation = dataset(mstring('xlsfile'), mstring('fixationP2.xlsx'))
+
+for i in  mslice[1:n]:
+ for j in mslice[1:m]:
+x = Fixation.MappedFixationPointX(mslice[i:i + 1])
+y = Fixation.MappedFixationPointY(mslice[i:i + 1])
+eda = data.eda(mslice[j:j + 1])
+end;
+end;
+
+vidobj.Quality = 100
+
+datainv = max(eda) - eda
+# determine the baseline and the corresponding index for participant's data
+
+[basline, indx] = findpeaks(datainv)
+
+baseline = eda(indx)
+
+z = sin(eda)
+edai = eda(1)
+# Apply Savitsky Golay filters to remove noise and other artifacts
+# NOTE: This function is only available in matlab which is used as a plantform
+# This functions is used because, because it preserves the shape of the original
+# SCR function signal 
+scl = sgolayfilt(eda, 2, 5)
+T = sin(scl)
+scli = scl(1)
+
+t = sin(baseline)
+baselinei = baseline(1); print baselinei
+p = sin(indx)
+indxi = indx(1)
+
+# detect the peaks from the Skin conductance signal
+# Refer the peak dection function in 
+# https://bitbucket.org/isiakaf/scr_peak_detection/src 
+# each peak detected is linked to fixations points from the eye tracking data
+# of the present subject.
+
+[peaks, time] = findpeaks(eda)
+D = data.AOI(mslice[j:j + 1])
+A = D(time(mslice[1:end]))
+label2 = cellstr(A)
+
+Z = data.Data1(mslice[j:j + 1])
+F = Z(time(mslice[1:end]))
+label3 = cellstr(F)
+# Plot the SCR and fixation points of the current session
+# visualize the of the output
+# The fixations are analyzed based on a 3 to 4 datapoints corresponding to
+# a 3secs window frame.
+
+figure()
+subplot(2, 1, 1)
+h1 = plot(edai, mstring('YDataSource'), mstring('edai'), mstring('LineWidth'), 2)
+text(time, peaks, label2, mstring('VerticalAlignment'), mstring('bottom'), mstring('HorizontalAlignment'), mstring('right'))
+
+text(time, peaks, label3, mstring('FontSize'), 12, mstring('VerticalAlignment'), mstring('top'), mstring('HorizontalAlignment'), mstring('left'))
+
+ylabel(mstring('SCR/SCL(us)'))
+xlabel(mstring('Time (sec)'))
+title(mstring('SCR in sync with Fixation points in AOI on a webpage'))
+
+hold(mstring('on'))
+h2 = plot(scli, mstring('r--'), mstring('YDataSource'), mstring('scli'), mstring('LineWidth'), 2, mstring('color'), mstring('r'))
+hold(mstring('on'))
+h3 = plot(indxi, baselinei, mstring('r--'), mstring('XDataSource'), mstring('indxi'), mstring('YDataSource'), mstring('baselinei'), mstring('LineWidth'), 2, mstring('color'), mstring('g'))
+
+# Import Webpage image or video.
+# This program is currently using a webpage image
+# In the next segment we import url.
+# The Time slice is only for the current session.
+subplot(2, 1, 2)
+I = imread(mstring('iGoogle1.png'))
+set(gcf, mstring('color'), mstring('cyan'))
+
+xi = x(1)
+yi = y(1)
+A1 = mslice[1:107]
+xImg = linspace(min(x), max(x), size(I, 2))
+yImg = linspace(min(y), max(y), size(I, 1))
+image(xImg, yImg, I, mstring('CDataMapping'), mstring('scaled'))
+hold(mstring('on'))
+
+h = plot(xi, yi, mstring('mo'), xi, yi, mstring('r--'), mstring('MarkerEdgeColor'), mstring('k'), mstring('MarkerFaceColor'), mstring('r'), mstring('MarkerSize'), 15, mstring('XDataSource'), mstring('xi'), mstring('YDataSource'), mstring('yi'), mstring('color'), mstring('r'))
+
+ylabel(mstring('MappedFixationPointY'))
+xlabel(mstring('MappedFixationPointX'))
+
+for i in mslice[1:length(A1)]:
+    yi = y(mslice[1:i])
+    xi = x(mslice[1:i])
+    edai = eda(mslice[1:i])
+    scli = scl(mslice[1:i])
+    baselinei = baseline(mslice[1:end])
+    indxi = indx(mslice[1:end])
+
+    htext = text(x(i), y(i), mcat([mstring(' '), num2str(A1(i)), mstring('')]), mstring('Color'), mcat([0, 0, 0]), mstring('FontSize'), 8, mstring('HorizontalAlignment'), mstring('center'), mstring('VerticalAlignment'), mstring('middle'))
+
+    set(htext, mstring('Position'), mcat([x(i), y(i)]))
+    refreshdata(h)
+    refreshdata(h1)
+    refreshdata(h2)
+    refreshdata(h3)
+
+
+    drawnow
+    pause(1)
+
+end

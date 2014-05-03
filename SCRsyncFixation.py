@@ -1,4 +1,11 @@
-# Import both the SCR  and corresponding fixation points
+#IThis appendix contains the algorithm used to produce 
+#Ithe output and the demography of the participants.
+#IFor the algorithm, the data from both sensors 
+#Iare exported to excel for preprocessing to produce a 
+#Idataset with annotated events which includes fixation index, 
+#Ifixation points, fixation duration and SCR . 
+#IThe dataset is then called into the algorithm using short term time intervals.
+ #Import both the SCR  and corresponding fixation points
 # from the sync data file
 # note before import of the datasets the Synchronized SCR and Eye gaze undergoes
 # a form of preprocessing
